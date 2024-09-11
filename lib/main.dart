@@ -1,6 +1,9 @@
+import 'package:employee_management/views/add_edit_employee_screen.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'viewmodels/employee_view_model.dart';
+import 'views/employee_details_screen.dart';
 import 'views/employee_list_screen.dart';
 // import 'views/add_edit_employee_screen.dart';
 // import 'views/employee_details_screen.dart';
@@ -22,8 +25,8 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => EmployeeListScreen(),
-          // '/add': (context) => AddEditEmployeeScreen(),
-          // '/edit': (context) => AddEditEmployeeScreen(),
+          '/add': (context) => AddEditEmployeeScreen(),
+          '/edit': (context) => AddEditEmployeeScreen(),
           // '/details': (context) => EmployeeDetailsScreen(),
         },
       ),

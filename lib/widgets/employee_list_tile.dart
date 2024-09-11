@@ -17,6 +17,7 @@ class EmployeeListTile extends StatelessWidget {
       trailing: IconButton(
         icon: Icon(Icons.edit),
         onPressed: () {
+          print("Edit button pressed");
           Navigator.pushNamed(context, '/edit', arguments: employee);
         },
       ),
