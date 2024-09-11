@@ -7,7 +7,7 @@ class Employee {
   final String country;
   final String state;
   final String district;
-  final DateTime? createdAt;
+  final String? createdAt;
 
   Employee({
     required this.id,
@@ -32,7 +32,7 @@ class Employee {
       country: json['country'] ?? '',
       state: json['state'] ?? '',
       district: json['district'] ?? '',
-      createdAt: json['createdAt'] != null ? DateTime.tryParse(json['createdAt']) : null,
+      createdAt: json['createdAt'] != null ? json['createdAt'] : null,
     );
   }
 
@@ -47,7 +47,7 @@ class Employee {
       'country': country,
       'state': state,
       'district': district,
-      'createdAt': createdAt?.toIso8601String(),
+      'createdAt': createdAt,
     };
   }
 }
