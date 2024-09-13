@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../models/employee.dart';
 import '../viewmodels/employee_view_model.dart';
@@ -10,18 +11,13 @@ class EmployeeListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(backgroundImage: NetworkImage(employee.avatar)),
-      title: Text(employee.name),
-      subtitle: Text(employee.email),
-      trailing: IconButton(
-        icon: Icon(Icons.edit),
-        onPressed: () {
-          print("Edit button pressed");
-          Navigator.pushNamed(context, '/edit', arguments: employee);
-        },
-      ),
+    return GestureDetector(
+      onTap: () {
+        // Navigates to EmployeeDetailsScreen on tap of the ListTile
+        Navigator.pushNamed(context, '/details', arguments: employee);
+      },
       onLongPress: () {
+        // Show delete confirmation dialog on long press
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -32,18 +28,41 @@ class EmployeeListTile extends StatelessWidget {
                 onPressed: () async {
                   await Provider.of<EmployeeViewModel>(context, listen: false)
                       .deleteEmployee(employee.id);
-                  Navigator.pop(context);
+                  Navigator.pop(context); // Close the dialog
                 },
                 child: Text('Delete'),
               ),
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context), // Cancel action
                 child: Text('Cancel'),
               ),
             ],
           ),
         );
       },
+      child: ListTile(
+        leading: CachedNetworkImage(
+          imageUrl: employee.avatar,
+          placeholder: (context, url) => CircleAvatar(
+            backgroundColor: Colors.grey[200],
+            child: Icon(Icons.person, color: Colors.grey[600]),
+          ),
+          errorWidget: (context, url, error) => CircleAvatar(
+            backgroundColor: Colors.grey[200],
+            child: Icon(Icons.person, color: Colors.grey[600]),
+          ),
+          fit: BoxFit.cover, // Ensures the image covers the boundary
+        ),
+        title: Text(employee.name),
+        subtitle: Text('ID: ${employee.id}'),
+        trailing: IconButton(
+          icon: Icon(Icons.edit),
+          onPressed: () {
+            // Navigates to AddEditEmployeeScreen when edit button is pressed
+            Navigator.pushNamed(context, '/edit', arguments: employee);
+          },
+        ),
+      ),
     );
   }
 }

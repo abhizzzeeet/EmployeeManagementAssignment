@@ -7,6 +7,8 @@ import '../models/employee.dart';
   class EmployeeViewModel extends ChangeNotifier {
     List<Employee> _employees = [];
     List<Employee> get employees => _employees;
+    List<Employee> _filteredEmployees = [];
+    List<Employee> get filteredEmployees => _filteredEmployees;
 
     List<Country> _countries = [];
     List<Country> get countries => _countries;
@@ -25,7 +27,7 @@ import '../models/employee.dart';
         if (response.statusCode == 200) {
           final List<dynamic> data = json.decode(response.body);
           _employees = data.map((e) => Employee.fromJson(e)).toList();
-  
+          _filteredEmployees = _employees;
           // Update the sorted list of IDs
           _sortedEmployeeIds = _employees
               .map((employee) => int.tryParse(employee.id) ?? 0)
@@ -39,6 +41,23 @@ import '../models/employee.dart';
       } finally {
         _isLoading = false;
         notifyListeners();
+      }
+    }
+    // Filter method to handle search logic
+    void filterEmployeesById(String searchQuery) {
+      try {
+        if (searchQuery.isEmpty) {
+          _filteredEmployees = _employees; // Reset to full list if query is empty
+        } else {
+          _filteredEmployees = _employees
+              .where((employee) => employee.id.contains(searchQuery))
+              .toList();
+        }
+        notifyListeners(); // Notify the UI to update with the new filtered list
+      } catch (e) {
+        print('Error filtering employees: $e');
+        // Optionally, handle the error or show a message in the UI
+        // For example, set a state variable with the error message
       }
     }
 

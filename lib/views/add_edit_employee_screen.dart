@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../models/country.dart';
 import '../models/employee.dart';
 import '../viewmodels/employee_view_model.dart';
 
@@ -101,20 +102,27 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                 },
               ),
               DropdownButtonFormField<String>(
-                value: _selectedCountry,
+                value: _selectedCountry != null
+                    ? employeeViewModel.countries
+                    .firstWhere(
+                      (country) => country.name.toLowerCase() == _selectedCountry!.toLowerCase(),
+                  orElse: () {
+                    // If no match found and _selectedCountry is not empty, add the country to the list
+                      final newCountry = Country(id: '', name: _selectedCountry!, flag: '');
+                      employeeViewModel.countries.add(newCountry);
+                      return newCountry;
+                  },
+                )
+                    ?.name
+                    : null, // Set value to null if _selectedCountry is null (new employee case)
                 decoration: InputDecoration(labelText: 'Country'),
                 items: employeeViewModel.countries.map((country) {
                   return DropdownMenuItem(
                     value: country.name,
                     child: Row(
                       children: [
-                        // Image.network(
-                        //   country.flag,
-                        //   width: 25,
-                        //   height: 25,
-                        //   fit: BoxFit.cover,
-                        // ),
-                        // SizedBox(width: 10),
+                        // Image.network(country.flag, width: 25, height: 25), // Flag (if needed)
+                        SizedBox(width: 10),
                         Text(country.name),
                       ],
                     ),
@@ -123,11 +131,12 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                 onChanged: (value) {
                   setState(() {
                     _selectedCountry = value;
-                    print("value passed in selectedCountry: ${_selectedCountry}");
                   });
                 },
                 validator: (value) => value == null || value.isEmpty ? 'Please select a country' : null,
               ),
+
+
               TextFormField(
                 controller: _stateController,
                 decoration: InputDecoration(labelText: 'State'),
