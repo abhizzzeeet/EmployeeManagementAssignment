@@ -37,7 +37,7 @@ class EmployeeDetailsScreen extends StatelessWidget {
                 ),
                 errorWidget: (context, url, error) => CircleAvatar(
                   backgroundColor: Colors.grey[200],
-                  child: Icon(Icons.error, color: Colors.grey[600]),
+                  child: Icon(Icons.person, color: Colors.grey[600]),
                 ),
                 width: 100, // Adjust width as needed
                 height: 100, // Adjust height as needed
