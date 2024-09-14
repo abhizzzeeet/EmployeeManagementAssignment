@@ -15,10 +15,8 @@ App Features:
 
 
 
-https://github.com/user-attachments/assets/0d41722d-5f5e-44b2-9315-4967ee78cb0a
+https://github.com/user-attachments/assets/964198a6-c965-4bc4-a6c8-bacddd891341
 
 
-
-https://github.com/user-attachments/assets/4f5d90c6-8fa9-44db-b199-80164dfda6a6
 
 
