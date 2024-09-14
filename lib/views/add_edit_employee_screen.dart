@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io'; // Import for File class
-import '../models/country.dart';
 import '../models/employee.dart';
 import '../viewmodels/employee_view_model.dart';
 
@@ -21,8 +17,7 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
   late TextEditingController _stateController;
   late TextEditingController _districtController;
   String? _selectedCountry;
-  String? _imageUrl; // Store image URL
-  final ImagePicker _picker = ImagePicker();
+  String _buttonText='';
 
   @override
   void initState() {
@@ -32,6 +27,29 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
     _mobileController = TextEditingController();
     _stateController = TextEditingController();
     _districtController = TextEditingController();
+
+    // Ensure this runs after the initial build to access passed data via ModalRoute
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final employee = ModalRoute.of(context)!.settings.arguments as Employee?;
+
+      if (employee != null) {
+        // Initialize controllers with the passed employee data
+        _nameController.text = employee.name;
+        _emailController.text = employee.email;
+        _mobileController.text = employee.mobile;
+        _stateController.text = employee.state;
+        _districtController.text = employee.district;
+        setState(() {
+          _selectedCountry = employee.country;  // Call setState to reflect in dropdown
+          _buttonText='SaveChanges';
+        });
+        print('EditEmployeeScreen employee initialized');
+      }else{
+        setState(() {
+          _buttonText = 'Add Employee';
+        });
+      }
+    });
   }
 
   @override
@@ -44,42 +62,23 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _imageUrl = pickedFile.path; // Set image URL to local file path
-      });
-    }
-    print("ImageUrl set locally: $_imageUrl");
-  }
-
   @override
   Widget build(BuildContext context) {
     final employee = ModalRoute.of(context)!.settings.arguments as Employee?;
+
     final employeeViewModel = Provider.of<EmployeeViewModel>(context);
 
-    if (employeeViewModel.countries.isEmpty) {
-      employeeViewModel.fetchCountries();
-    }
 
-    if (employee != null) {
-      _nameController.text = employee.name;
-      _emailController.text = employee.email;
-      _mobileController.text = employee.mobile;
-      _stateController.text = employee.state;
-      _districtController.text = employee.district;
-      _selectedCountry = employee.country;
-      _imageUrl = employee.avatar; // Set image URL from employee data
-      print('AddEditEmployeeScreen employee not null');
-    } else {
-      _imageUrl = null; // No image URL for new employee
-      print('AddEditEmployeeScreen employee null');
-    }
+      // Fetch countries if not already fetched
+      if (employeeViewModel.countries.isEmpty) {
+        employeeViewModel.fetchCountries();
+      }
+
+
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(employee == null ? 'Add Employee' : 'Edit Employee'),
+        title: Text('Edit Employee'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -87,39 +86,6 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
           key: _formKey,
           child: ListView(
             children: [
-              Center(
-                child: GestureDetector(
-                  onTap: _pickImage,
-                  child: _imageUrl != null
-                      ? _imageUrl!.startsWith('http') // Check if URL is a network URL
-                      ? CachedNetworkImage(
-                    imageUrl: _imageUrl!,
-                    placeholder: (context, url) => CircleAvatar(
-                      backgroundColor: Colors.grey[200],
-                      child: Icon(Icons.image, color: Colors.grey[600]),
-                    ),
-                    errorWidget: (context, url, error) => CircleAvatar(
-                      backgroundColor: Colors.grey[200],
-                      child: Icon(Icons.person, color: Colors.grey[600]),
-                    ),
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  )
-                      : Image.file(
-                    File(_imageUrl!),
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.cover,
-                  )
-                      : CircleAvatar(
-                    backgroundColor: Colors.grey[200],
-                    child: Icon(Icons.add_a_photo, color: Colors.grey[600]),
-                    radius: 50,
-                  ),
-                ),
-              ),
-              SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(labelText: 'Name'),
@@ -151,34 +117,32 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                 },
               ),
               DropdownButtonFormField<String>(
-                value: _selectedCountry != null
-                    ? employeeViewModel.countries
-                    .firstWhere(
-                      (country) => country.name.toLowerCase() == _selectedCountry!.toLowerCase(),
-                  orElse: () {
-                    final newCountry = Country(id: '', name: _selectedCountry!, flag: '');
-                    employeeViewModel.countries.add(newCountry);
-                    return newCountry;
-                  },
-                )
-                    ?.name
-                    : null,
+                value: _selectedCountry,
                 decoration: InputDecoration(labelText: 'Country'),
                 items: employeeViewModel.countries.map((country) {
                   return DropdownMenuItem(
                     value: country.name,
                     child: Row(
                       children: [
-                        SizedBox(width: 10),
+                        // Image.network(
+                        //   country.flag,
+                        //   width: 25,
+                        //   height: 25,
+                        //   fit: BoxFit.cover,
+                        // ),
+                        // SizedBox(width: 10),
                         Text(country.name),
                       ],
                     ),
                   );
                 }).toList(),
                 onChanged: (value) {
-                  setState(() {
-                    _selectedCountry = value;
-                  });
+                  // setState(() {
+                  //   flag=flag+1;
+                  //   _selectedCountry = value;
+                  //   print("value passed in selectedCountry: ${_selectedCountry}");
+                  // });
+                  _selectedCountry=value;
                 },
                 validator: (value) => value == null || value.isEmpty ? 'Please select a country' : null,
               ),
@@ -207,13 +171,14 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     try {
+                      // Get the current date and time in ISO 8601 format
                       String formattedDate = DateFormat("yyyy-MM-ddTHH:mm:ss.SSSSSS").format(DateTime.now());
                       if (employee == null) {
                         await employeeViewModel.createEmployee(
                           Employee(
                             id: employeeViewModel.getNextAvailableId().toString(),
                             name: _nameController.text,
-                            avatar: _imageUrl ?? '', // Set avatar to local image path or empty
+                            avatar: '',
                             email: _emailController.text,
                             mobile: _mobileController.text,
                             country: _selectedCountry!,
@@ -227,8 +192,8 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                         await employeeViewModel.updateEmployee(
                           Employee(
                             id: employee!.id,
+                            avatar: '',
                             name: _nameController.text,
-                            avatar: _imageUrl ?? '', // Update avatar URL or keep it unchanged
                             email: _emailController.text,
                             mobile: _mobileController.text,
                             country: _selectedCountry!,
@@ -240,6 +205,7 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                         print('Employee successfully updated');
                       }
 
+                      // After successful operation, go back to the previous screen
                       Navigator.pop(context);
                     } catch (error) {
                       print('Error: $error');
@@ -249,8 +215,9 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                     }
                   }
                 },
-                child: Text(employee == null ? 'Add Employee' : 'Save Changes'),
+                child: Text(_buttonText),
               ),
+
             ],
           ),
         ),

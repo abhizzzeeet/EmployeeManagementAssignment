@@ -1,12 +1,25 @@
+import 'package:employee_management/viewmodels/employee_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:provider/provider.dart';
 import '../models/employee.dart';
 
 class EmployeeDetailsScreen extends StatelessWidget {
 
+
+  late Employee employee;
+
   @override
   Widget build(BuildContext context) {
-    final Employee employee = ModalRoute.of(context)!.settings.arguments as Employee;
+    final employeeViewModel = Provider.of<EmployeeViewModel>(context, listen: false);
+    final id = ModalRoute.of(context)!.settings.arguments as String;
+    employeeViewModel.filterEmployeesById(id);
+
+    // After filtering, assign the found employee to the local variable
+    if (employeeViewModel.filteredEmployees.isNotEmpty) {
+      employee = employeeViewModel.filteredEmployees.first;
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text('${employee.name} Details'),
@@ -14,11 +27,8 @@ class EmployeeDetailsScreen extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.edit),
             onPressed: () {
-              Navigator.pushNamed(
-                context,
-                '/edit',
-                arguments: employee,
-              );
+              // employeeViewModel.setCurrentEmployee(employee);
+              Navigator.pushNamed(context, '/edit', arguments: employee);
             },
           ),
         ],

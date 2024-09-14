@@ -10,6 +10,14 @@ import '../models/employee.dart';
     List<Employee> _filteredEmployees = [];
     List<Employee> get filteredEmployees => _filteredEmployees;
 
+
+    Employee? _currentEmployee;
+    Employee? get currentEmployee{
+      final tempEmployee = _currentEmployee;
+      _currentEmployee = null;
+      return tempEmployee;
+    }
+
     List<Country> _countries = [];
     List<Country> get countries => _countries;
 
@@ -18,6 +26,11 @@ import '../models/employee.dart';
   
     List<int> _sortedEmployeeIds = []; // Sorted list of employee IDs
     List<int> get sortedEmployeeIds => _sortedEmployeeIds; // Getter for sortedEmployeeIds
+
+    void setCurrentEmployee(Employee? employee) {
+      _currentEmployee = employee;
+      print("New current Employee: ${_currentEmployee?.name}");
+    }
   
     Future<void> fetchEmployees() async {
       _isLoading = true;
@@ -70,7 +83,6 @@ import '../models/employee.dart';
           final List<dynamic> data = json.decode(response.body);
           _countries = data.map((e) => Country.fromJson(e)).toList();
           notifyListeners();
-          print("Countries fetched: ${_countries[0].flag}");
         } else {
           throw Exception('Failed to load countries');
         }
@@ -113,6 +125,7 @@ import '../models/employee.dart';
     }
   
     Future<void> updateEmployee(Employee employee) async {
+      print("vieModel: ${employee.country}");
       final response = await http.put(
         Uri.parse('https://669b3f09276e45187d34eb4e.mockapi.io/api/v1/employee/${employee.id}'),
         headers: {'Content-Type': 'application/json'},

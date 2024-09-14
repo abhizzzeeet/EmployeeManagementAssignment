@@ -11,10 +11,11 @@ class EmployeeListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final employeeViewModel = Provider.of<EmployeeViewModel>(context, listen: false);
     return GestureDetector(
       onTap: () {
         // Navigates to EmployeeDetailsScreen on tap of the ListTile
-        Navigator.pushNamed(context, '/details', arguments: employee);
+        Navigator.pushNamed(context, '/details', arguments: employee.id);
       },
       onLongPress: () {
         // Show delete confirmation dialog on long press
@@ -26,7 +27,7 @@ class EmployeeListTile extends StatelessWidget {
             actions: [
               TextButton(
                 onPressed: () async {
-                  await Provider.of<EmployeeViewModel>(context, listen: false)
+                  await employeeViewModel
                       .deleteEmployee(employee.id);
                   Navigator.pop(context); // Close the dialog
                 },
@@ -59,6 +60,7 @@ class EmployeeListTile extends StatelessWidget {
           icon: Icon(Icons.edit),
           onPressed: () {
             // Navigates to AddEditEmployeeScreen when edit button is pressed
+            // employeeViewModel.setCurrentEmployee(employee);
             Navigator.pushNamed(context, '/edit', arguments: employee);
           },
         ),

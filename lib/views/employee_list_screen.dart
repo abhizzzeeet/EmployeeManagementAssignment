@@ -23,34 +23,11 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     });
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: AppBar(title: Text('Employee List')),
-  //     body: Consumer<EmployeeViewModel>(
-  //       builder: (context, viewModel, child) {
-  //         return viewModel.isLoading
-  //             ? Center(child: CircularProgressIndicator())
-  //             : ListView.builder(
-  //           itemCount: viewModel.employees.length,
-  //           itemBuilder: (context, index) {
-  //             final employee = viewModel.employees[index];
-  //             return EmployeeListTile(employee: employee);
-  //           },
-  //         );
-  //       },
-  //     ),
-  //     floatingActionButton: FloatingActionButton(
-  //       onPressed: () {
-  //         Navigator.pushNamed(context, '/add');
-  //       },
-  //       child: Icon(Icons.add),
-  //     ),
-  //   );
-  // }
+  
 
   @override
   Widget build(BuildContext context) {
+    _searchController.text = '';
     return Scaffold(
       appBar: AppBar(title: Text('Employee List')),
       body: Column(
