@@ -9,18 +9,15 @@ class EmployeeDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final employeeViewModel = Provider.of<EmployeeViewModel>(context, listen: false);
     final id = ModalRoute.of(context)!.settings.arguments as String;
-    employeeViewModel.filterEmployeesById(id);
 
     // After filtering, assign the found employee to the local variable
-    Employee? employee;
-    if (employeeViewModel.filteredEmployees.isNotEmpty) {
-      employee = employeeViewModel.filteredEmployees.first;
-    }
+    Employee employee;
+    employee = employeeViewModel.fetchEmployeeById(id);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          '${employee?.name ?? 'Employee'} Details',
+          '${employee.name ?? 'Employee'} Details',
           style: TextStyle(color: Colors.white), // White text color
         ),
         backgroundColor: Color(0xFF603FEF), // AppBar background color
@@ -52,7 +49,7 @@ class EmployeeDetailsScreen extends StatelessWidget {
                   children: [
                     Center(
                       child: CachedNetworkImage(
-                        imageUrl: employee?.avatar ?? '', // Replace with the actual image URL
+                        imageUrl: employee.avatar ?? '', // Replace with the actual image URL
                         placeholder: (context, url) => CircleAvatar(
                           backgroundColor: Colors.grey[200],
                           child: Icon(Icons.person, color: Colors.grey[600]),

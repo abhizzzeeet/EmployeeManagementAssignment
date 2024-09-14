@@ -25,7 +25,6 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _searchController.text = '';
     return Scaffold(
       body: Column(
         children: [
