@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../models/country.dart';
 import '../models/employee.dart';
 import '../viewmodels/employee_view_model.dart';
 
@@ -189,7 +190,18 @@ class _AddEditEmployeeScreenState extends State<AddEditEmployeeScreen> {
                         },
                       ),
                       DropdownButtonFormField<String>(
-                        value: _selectedCountry,
+                        value: _selectedCountry != null
+                            ? employeeViewModel.countries
+                            .firstWhere(
+                              (country) => country.name.toLowerCase() == _selectedCountry!.toLowerCase(),
+                          orElse: () {
+                            final newCountry = Country(id: '', name: _selectedCountry!, flag: '');
+                            employeeViewModel.countries.add(newCountry);
+                            return newCountry;
+                          },
+                        )
+                            ?.name
+                            : null,
                         decoration: InputDecoration(
                           labelText: 'Country',
                           prefixIcon: Icon(Icons.location_on, color: Colors.black54), // Icon for country
