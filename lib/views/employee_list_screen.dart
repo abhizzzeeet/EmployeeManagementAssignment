@@ -23,23 +23,56 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
     });
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     _searchController.text = '';
     return Scaffold(
-      appBar: AppBar(title: Text('Employee List')),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Search by Employee ID',
-                border: OutlineInputBorder(),
+          Container(
+            decoration: BoxDecoration(
+              color: Color(0xFF603FEF), // Background color
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(30), // Curved bottom corners
               ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 8.0), // Added upper padding
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Employee List',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), // Increased padding
+                  child: Container(
+                    margin: const EdgeInsets.only(bottom: 8.0), // Bottom margin
+                    decoration: BoxDecoration(
+                      color: Colors.white, // TextField background color
+                      borderRadius: BorderRadius.circular(20), // Curved border
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        border: InputBorder.none, // Remove default border
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        hintText: 'Search by employee ID',
+                        hintStyle: TextStyle(color: Colors.black45),
+                      ),
+                      style: TextStyle(color: Colors.black), // Text color
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Expanded(
@@ -48,10 +81,13 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                 return viewModel.isLoading
                     ? Center(child: CircularProgressIndicator())
                     : ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0), // Reduce distance between containers
                   itemCount: viewModel.filteredEmployees.length,
                   itemBuilder: (context, index) {
                     final filteredEmployee = viewModel.filteredEmployees[index];
-                    return EmployeeListTile(employee: filteredEmployee);
+                    return EmployeeListTile(
+                      employee: filteredEmployee,
+                    );
                   },
                 );
               },
@@ -63,7 +99,9 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
         onPressed: () {
           Navigator.pushNamed(context, '/add');
         },
-        child: Icon(Icons.add),
+        backgroundColor: Color(0xFF603FEF), // FloatingActionButton background color
+        shape: CircleBorder(), // Circular shape
+        child: Icon(Icons.add, color: Colors.white), // White icon color
       ),
     );
   }
